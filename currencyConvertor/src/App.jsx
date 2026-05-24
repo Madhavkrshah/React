@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { InputBox } from "./components";
 import useCurrencyInfo from "./hooks/useCurrencyInfo";
+import { ArrowUpDown } from "lucide-react";
 import "./App.css";
 
 function App() {
-  const [amount, setAmount] = useState(Number());
+  const [amount, setAmount] = useState("");
   const [from, setFrom] = useState("usd");
   const [to, setTo] = useState("inr");
-  const [convertedAmount, setConvertedAmount] = useState(Number());
+  const [convertedAmount, setConvertedAmount] = useState("");
 
   const currencyInfo = useCurrencyInfo(from);
 
-  const options = Object.keys(currencyInfo);
+  const options = currencyInfo ? Object.keys(currencyInfo) : [];
 
   const swap = () => {
     setFrom(to);
@@ -21,20 +22,18 @@ function App() {
   };
 
   const convert = () => {
-    setConvertedAmount(amount * currencyInfo[to]);
+    setConvertedAmount(Number(amount) * currencyInfo[to]);
   };
 
-  const BackgroundImage = `https://images.pexels.com/photos/8442352/pexels-photo-8442352.jpeg`;
+  const BackgroundImage = `https://images.pexels.com/photos/5849556/pexels-photo-5849556.jpeg`;
 
   return (
-    <div
-      className="w-full h-screen flex flex-wrap justify-center items-center bg-cover bg-no-repeat"
-      style={{
-        backgroundImage: `url('${BackgroundImage}')`,
-      }}
-    >
+    <div className="w-full h-screen bg-cover bg-center bg-no-repeat flex justify-center items-center p-4 bg-[url('https://images.pexels.com/photos/5849556/pexels-photo-5849556.jpeg')]">
       <div className="w-full">
         <div className="w-full max-w-md mx-auto border border-gray-60 rounded-lg p-5 backdrop-blur-sm bg-white/30">
+          <div className="text-center font-bold my-4 bg-yellow-500 p-4 rounded-2xl">
+            Your goto currency convertor
+          </div>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -46,7 +45,7 @@ function App() {
                 label="From"
                 amount={amount}
                 currencyOptions={options}
-                onCurrencyChange={(currency) => setAmount(amount)}
+                onCurrencyChange={(currency) => setFrom(currency)}
                 selectCurrency={from}
                 onAmountChange={(amount) => setAmount(amount)}
               />
@@ -57,7 +56,7 @@ function App() {
                 className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 border-2 border-white rounded-md bg-blue-600 text-white px-2 py-0.5 cursor-pointer"
                 onClick={swap}
               >
-                swap
+                <ArrowUpDown />
               </button>
             </div>
             <div className="w-full mt-1 mb-4">
@@ -72,7 +71,7 @@ function App() {
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg"
+              className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg cursor-pointer"
             >
               Convert {from.toUpperCase()} to {to.toUpperCase()}
             </button>

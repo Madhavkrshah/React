@@ -4,35 +4,36 @@ import { Button, Input, Select, RTE } from "../index";
 import appwriteService from "../../appwrite/config";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { Condition } from "appwrite";
 
-export default function PostForm() {
+export default function PostForm({ post }) {
   const { register, handleSubmit, watch, setValue, control, getValues } =
     useForm({
       defaultValues: {
         title: post?.title || "",
-        slug: post?.slug || "",
+        slug: post?.$id || "",
         content: post?.content || "",
         status: post?.status || "active",
       },
     });
 
   const navigate = useNavigate();
-  const userData = useSelector((state) => state.user.userData);
+  const userData = useSelector((state) => state.auth.userData);
 
   const submit = async (data) => {
     if (post) {
       const file = data.image[0]
-        ? appwriteService.uploadFile(data.image[0])
+        ? await appwriteService.uploadFile(data.image[0])
         : null;
 
       if (file) {
         appwriteService.deleteFile(post.featuredImage);
       }
+
       const dbPost = await appwriteService.updatePost(post.$id, {
         ...data,
         featuredImage: file ? file.$id : undefined,
       });
+
       if (dbPost) {
         navigate(`/post/${dbPost.$id}`);
       } else {
@@ -89,7 +90,7 @@ export default function PostForm() {
           {...register("slug", { required: true })}
           onInput={(e) => {
             setValue("slug", slugTransform(e.currentTarget.value), {
-              shouldValidates: true,
+              shouldValidate: true,
             });
           }}
         />
@@ -97,7 +98,7 @@ export default function PostForm() {
           label="Content :"
           name="content"
           control={control}
-          defaultValues={getValues("content")}
+          defaultValue={getValues("content")}
         />
       </div>
       <div className="w-1/3 px-2">
@@ -123,7 +124,11 @@ export default function PostForm() {
           className="mb-4"
           {...register("status", { required: true })}
         />
-        <Button type="submit" bgColor={post ? "bg-green-500" : undefined}>
+        <Button
+          type="submit"
+          bgColor={post ? "bg-green-500" : undefined}
+          className="w-full"
+        >
           {post ? "Update" : "Submit"}
         </Button>
       </div>

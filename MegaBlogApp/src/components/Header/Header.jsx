@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-function Header() {
+export default function Header() {
   const authStatus = useSelector((state) => state.auth.status);
   const navigate = useNavigate();
 
@@ -17,7 +17,7 @@ function Header() {
   ];
 
   return (
-    <header>
+    <header className="py-3 shadow bg-gray-500">
       <Container>
         <nav className="flex">
           <div className="mr-4">
@@ -49,5 +49,3 @@ function Header() {
     </header>
   );
 }
-
-export default Header;
